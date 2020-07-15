@@ -3,20 +3,26 @@ const Users = require('./users/userDb.js');
 
 module.exports = {
   logger: function (req, res, next) {
-    console.log(`${req.method} Request, ${req.url}, ${Date()}`);
+    console.log(`${req.method} Request, ${res.status}, ${req.url}, ${Date()}`);
     next();
   },
 
   validateUserID: function (req, res, next) {
     Users.getById(req.params.id)
       .then(user => {
-        req.user = user
-        next()
+        if (user) {
+          req.user = user
+          next()
+        } else {
+          res.status(404).json({
+            message: 'The User with the specified ID does note xist '
+          });
+        }
       })
       .catch(err => {
         console.log(err)
         // next(err)
-        res.status(500).json({ message: "HEYOOO" })
+        res.status(500).json({ message: "Something Broke" });
       });
   },
 
@@ -39,9 +45,9 @@ module.exports = {
         req.post = post
         next()
       } else {
-        res.status(404).json({message: 'The post with the specified ID does not exist'})
+        res.status(404).json({ message: 'The post with the specified ID does not exist' });
       }
     })
-    .catch(next)
-  }
+    .catch(next);
+  },
 };

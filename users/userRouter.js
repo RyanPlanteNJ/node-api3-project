@@ -5,6 +5,7 @@ const {validateUser} = require('../middleware.js');
 const {validatePost} = require('../middleware.js');
 const {validateUserID} = require('../middleware.js');
 
+
 const router = express.Router();
 
 router.post('/', validateUser, async (req, res, next) => {
@@ -13,13 +14,20 @@ router.post('/', validateUser, async (req, res, next) => {
 });
 
 router.post('/:id/posts', validateUserID, validatePost, async (req, res) => {
-  try{
+  try {
     const newPost = await
-    Posts.insert(req.body)
-    res.status(201).json({data: newPost});
+    Posts.insert(req.body);
+    if (newPost) {
+      res.status(201).json(newPost);
+    } else {
+      res.status(400).json({
+        message: 'Missing Data'
+      });
+    }
   } catch (error) {
+    console.log(error);
     res.status(500).json({
-      message: 'exception'
+      message: 'Something Broke'
     });
   }
 });
@@ -27,7 +35,7 @@ router.post('/:id/posts', validateUserID, validatePost, async (req, res) => {
 router.get('/', async (req, res, next) => {
   try{
     const users = await Users.get();
-    if(users.length > 0) {
+    if(users.length) {
       res.status(200).json(users);
     } else {
       res.status(404).json({
