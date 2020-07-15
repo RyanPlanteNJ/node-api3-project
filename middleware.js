@@ -7,32 +7,23 @@ module.exports = {
     next();
   },
 
-  validateUserId: function (req, res, next) {
-    const {
-      id
-    } = req.params;
-    Users.getById(id)
+  validateUserID: function (req, res, next) {
+    Users.getById(req.params.id)
       .then(user => {
-        if (user) {
-          req.user = user;
-          next();
-        } else {
-          next(new Error('invalid user id'));
-        }
+        req.user = user
+        next()
       })
       .catch(err => {
-        console.log(err);
-        res.status(500).json({
-          message: 'exception',
-          err
-        });
+        console.log(err)
+        // next(err)
+        res.status(500).json({ message: "HEYOOO" })
       });
   },
 
   validateUser: function (req, res, next) {
     const UserInfo = req.body;
     !UserInfo || UserInfo === {} ?
-    res.status(400).json({ message: 'missing user data' }) : !UserInfo.name || UserInfo.name === '' ? res.status(400).json({ message: 'missing rquired name field' }) :
+    res.status(400).json({ message: 'missing user data' }) : !UserInfo.name || UserInfo.name === '' ? res.status(400).json({ message: 'missing required name field' }) :
     next();
   },
 
