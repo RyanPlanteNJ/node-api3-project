@@ -3,7 +3,7 @@ const Users = require('./users/userDb.js');
 
 module.exports = {
   logger: function (req, res, next) {
-    console.log(`${req.method} Request, ${res.status}, ${req.url}, ${Date()}`);
+    console.log(`${req.method} Request, ${req.url}, ${Date()}`);
     next();
   },
 
@@ -11,8 +11,8 @@ module.exports = {
     Users.getById(req.params.id)
       .then(user => {
         if (user) {
-          req.user = user
-          next()
+          req.user = user;
+          next();
         } else {
           res.status(404).json({
             message: 'The User with the specified ID does note xist '
